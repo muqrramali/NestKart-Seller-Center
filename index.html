@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestKart Seller Center</title>
+
+<!-- Seller Center Favicon — S logo -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230a0a0a'/><rect x='2' y='2' width='60' height='60' rx='10' fill='none' stroke='%23d4a017' stroke-width='3'/><text x='32' y='46' font-family='Arial Black,sans-serif' font-size='34' font-weight='900' fill='%23d4a017' text-anchor='middle'>SC</text></svg>" type="image/svg+xml">
+<meta name="theme-color" content="#d4a017">
+<meta name="robots" content="noindex, nofollow">
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyAst9vKwKzN28DfKukaBFNvjDY66BJADn8",
+    authDomain: "nestkart-2a2c2.firebaseapp.com",
+    projectId: "nestkart-2a2c2",
+    storageBucket: "nestkart-2a2c2.firebasestorage.app",
+    messagingSenderId: "987346746569",
+    appId: "1:987346746569:web:a08d29dfea81177253d118"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.db = db;
+  window.fsCollection = collection;
+  window.fsDocs = getDocs;
+  window.fsAddDoc = addDoc;
+  window.fsDeleteDoc = deleteDoc;
+  window.fsDoc = doc;
+  window.fsUpdateDoc = updateDoc;
+  window.fsOnSnapshot = onSnapshot;
+  window.firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:#060606;color:#fff;}
+:root{--g:#d4a017;--g2:#f0c040;--bg:#0d0d0d;--bg2:#111;--bd:#1c1c1c;--bd2:#262626;}
+input,select,textarea,button{font-family:'Poppins',sans-serif;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#111;}
+::-webkit-scrollbar-thumb{background:#d4a017;border-radius:3px;}
+
+/* LOGIN */
+.login-wrap{display:flex;min-height:100vh;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,#1a0f00 0%,#060606 70%);padding:20px;}
+.login-card{background:#0d0d0d;border:1px solid #d4a01740;border-radius:18px;
+  padding:40px 36px;width:100%;max-width:400px;text-align:center;}
+.login-logo{margin-bottom:24px;}
+.login-logo .brand{font-size:28px;font-weight:900;color:white;letter-spacing:-1px;}
+.login-logo .brand span{color:var(--g);}
+.login-logo .sub{font-size:12px;color:#555;margin-top:4px;font-weight:600;letter-spacing:2px;text-transform:uppercase;}
+.login-icon{font-size:56px;margin-bottom:16px;}
+.fg{margin-bottom:14px;text-align:left;}
+.fg label{display:block;font-size:10px;font-weight:800;color:#444;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.fg input{width:100%;padding:12px 14px;background:#080808;border:1.5px solid #222;border-radius:9px;
+  color:white;font-size:13px;outline:none;}
+.fg input:focus{border-color:var(--g);background:#0c0900;}
+.login-btn{width:100%;background:linear-gradient(90deg,var(--g),var(--g2));color:#000;
+  padding:13px;border:none;border-radius:9px;font-size:14px;font-weight:900;cursor:pointer;
+  margin-top:6px;letter-spacing:.3px;}
+.login-err{color:#ef4444;font-size:12px;margin-top:8px;display:none;}
+.store-link{margin-top:16px;font-size:12px;color:#444;cursor:pointer;}
+.store-link a{color:#d4a01780;text-decoration:none;}
+.store-link a:hover{color:var(--g);}
+
+/* MAIN LAYOUT */
+.layout{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:#080808;border-right:1px solid #161616;
+  position:fixed;height:100vh;overflow-y:auto;z-index:100;flex-shrink:0;}
+.sb-head{padding:20px 18px;border-bottom:1px solid #161616;}
+.sb-brand{font-size:15px;font-weight:900;color:white;}
+.sb-brand span{color:var(--g);}
+.sb-sub{font-size:9px;color:#333;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:12px 18px;
+  background:#0d0d0d;border-bottom:1px solid #161616;margin-bottom:8px;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#000;}
+.sb-uname{font-size:12px;font-weight:700;color:#ddd;}
+.sb-role{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.8px;}
+.sb-nav{padding:6px 10px;}
+.sb-section{font-size:8px;font-weight:800;color:#333;text-transform:uppercase;
+  letter-spacing:1.2px;padding:10px 8px 4px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;
+  cursor:pointer;color:#444;font-size:12px;font-weight:600;transition:all .2s;margin-bottom:2px;}
+.sb-item:hover{background:#111;color:#aaa;}
+.sb-item.on{background:#1a1200;color:var(--g);}
+.sb-item .icon{font-size:16px;width:20px;text-align:center;}
+.sb-item .badge{margin-left:auto;background:#ef4444;color:white;border-radius:10px;
+  padding:1px 7px;font-size:9px;font-weight:800;}
+.sb-item .badge.gold{background:var(--g);color:#000;}
+.sb-divider{height:1px;background:#111;margin:8px 10px;}
+.sb-bottom{padding:14px 18px;border-top:1px solid #111;margin-top:auto;}
+.logout-btn{width:100%;background:#111;border:1px solid #1a1a1a;color:#555;
+  padding:9px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.logout-btn:hover{border-color:#ef444430;color:#ef4444;}
+
+/* MAIN CONTENT */
+.main{margin-left:240px;flex:1;min-height:100vh;}
+.topbar{background:#080808;border-bottom:1px solid #161616;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-left h1{font-size:17px;font-weight:800;color:white;}
+.topbar-left p{font-size:11px;color:#333;margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{background:#111;border:1px solid #1a1a1a;color:#888;padding:8px 14px;
+  border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.tb-btn:hover{border-color:var(--g);color:var(--g);}
+.tb-btn.primary{background:linear-gradient(90deg,var(--g),var(--g2));color:#000;border:none;}
+
+/* CONTENT PAGES */
+.page{display:none;padding:22px 24px;}
+.page.on{display:block;}
+
+/* STATS CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:#0d0d0d;border:1px solid #161616;border-radius:12px;padding:18px;
+  display:flex;align-items:center;gap:14px;transition:border .2s;}
+.stat-card:hover{border-color:#2a2a2a;}
+.stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0;}
+.ic-gold{background:#d4a01718;}
+.ic-green{background:#22c55e18;}
+.ic-blue{background:#3b82f618;}
+.ic-red{background:#ef444418;}
+.ic-purple{background:#a855f718;}
+.stat-info h3{font-size:22px;font-weight:900;color:white;line-height:1;}
+.stat-info p{font-size:10px;color:#444;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.stat-info .trend{font-size:10px;color:#22c55e;font-weight:700;margin-top:2px;}
+
+/* CARDS */
+.card{background:#0d0d0d;border:1px solid #161616;border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.card-head{padding:14px 18px;border-bottom:1px solid #161616;display:flex;align-items:center;justify-content:space-between;}
+.card-head h3{font-size:13px;font-weight:800;color:var(--g);}
+.card-body{padding:18px;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:#080808;padding:10px 14px;text-align:left;font-size:9px;
+  font-weight:800;color:#333;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;}
+tbody td{padding:10px 14px;border-bottom:1px solid #0f0f0f;font-size:12px;color:#bbb;vertical-align:middle;}
+tbody tr:hover td{background:#0f0f0f;}
+tbody tr:last-child td{border:none;}
+.td-img{width:44px;height:44px;border-radius:8px;background:#111;border:1px solid #1a1a1a;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.td-img img{width:100%;height:100%;object-fit:cover;}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:800;}
+.b-live{background:#22c55e18;color:#22c55e;}
+.b-pend{background:#f59e0b18;color:#f59e0b;}
+.b-conf{background:#3b82f618;color:#3b82f6;}
+.b-del{background:#22c55e18;color:#22c55e;}
+.b-hot{background:#ef444418;color:#ef4444;}
+
+/* ACTION BUTTONS */
+.act-btn{padding:4px 10px;border:none;border-radius:6px;font-size:10px;font-weight:700;
+  cursor:pointer;margin-right:3px;}
+.act-edit{background:#3b82f618;color:#3b82f6;}
+.act-del{background:#ef444418;color:#ef4444;}
+.act-view{background:#d4a01718;color:var(--g);}
+.act-conf{background:#22c55e18;color:#22c55e;}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}
+.fgroup{margin-bottom:14px;}
+.fgroup label{display:block;font-size:9px;font-weight:800;color:#333;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.fgroup input,.fgroup select,.fgroup textarea{width:100%;padding:10px 13px;
+  background:#080808;border:1.5px solid #1a1a1a;border-radius:8px;color:white;
+  font-size:12px;outline:none;transition:border .2s;}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--g);}
+.fgroup textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.fgroup select option{background:#111;}
+.save-btn{background:linear-gradient(90deg,var(--g),var(--g2));color:#000;padding:11px 24px;
+  border:none;border-radius:9px;font-size:13px;font-weight:900;cursor:pointer;}
+.cancel-btn{background:#111;border:1px solid #222;color:#666;padding:11px 20px;
+  border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;margin-left:8px;}
+
+/* IMPORT SECTION */
+.import-box{background:#080808;border:1px solid #161616;border-radius:10px;padding:16px;margin-bottom:14px;}
+.import-status{display:none;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;
+  padding:12px;margin-top:10px;text-align:center;font-size:12px;color:#888;}
+.import-preview{display:none;background:#071307;border:1px solid #1a3a1a;border-radius:10px;
+  padding:14px;margin-top:12px;}
+.price-box{background:#080808;border:1px solid #161616;border-radius:8px;padding:12px;
+  text-align:center;}
+.price-box .pb-label{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.price-box .pb-val{font-size:18px;font-weight:900;color:var(--g);}
+
+/* IMG GRID */
+.img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.img-slot{aspect-ratio:1;border:2px dashed #1a1a1a;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;overflow:hidden;
+  color:#333;position:relative;background:#080808;transition:border .2s;}
+.img-slot:hover{border-color:var(--g);}
+.img-slot img{width:100%;height:100%;object-fit:cover;}
+.img-slot .rm{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.9);color:white;
+  border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;
+  display:none;align-items:center;justify-content:center;}
+.img-slot:hover .rm{display:flex;}
+
+/* BADGE BTNS */
+.badge-btn{background:#111;color:#555;border:1.5px solid #1a1a1a;padding:6px 14px;
+  border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.badge-btn.on{background:#1a1200;color:var(--g);border-color:var(--g);}
+
+/* CHAT */
+.chat-sessions{display:flex;flex-direction:column;gap:6px;}
+.cs{background:#080808;border:1px solid #161616;border-radius:9px;padding:11px 14px;
+  cursor:pointer;transition:all .2s;}
+.cs:hover,.cs.on{border-color:var(--g);background:#0d0900;}
+.cs-name{font-size:12px;font-weight:700;color:#ccc;}
+.cs-last{font-size:10px;color:#333;margin-top:2px;}
+.cs-badge{background:#ef4444;color:white;border-radius:10px;padding:0 6px;font-size:9px;font-weight:800;margin-left:6px;}
+.chat-msgs{height:300px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#060606;border-radius:9px;border:1px solid #161616;margin-bottom:10px;}
+.msg{max-width:70%;padding:9px 13px;border-radius:10px;font-size:11px;line-height:1.5;}
+.msg.c{background:#0d0900;border:1px solid #d4a01720;color:#ddd;align-self:flex-end;}
+.msg.a{background:#071307;border:1px solid #1a3a1a;color:#4ade80;align-self:flex-start;}
+.msg-time{font-size:9px;color:#333;margin-top:2px;}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;
+  align-items:center;justify-content:center;padding:16px;}
+.modal-ov.open{display:flex;}
+.modal{background:#0d0d0d;border:1px solid #d4a01740;border-radius:14px;padding:24px;
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-head h3{font-size:15px;font-weight:800;color:var(--g);}
+.modal-close{background:none;border:none;color:#444;font-size:20px;cursor:pointer;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;}
+.empty-state .ei{font-size:52px;margin-bottom:12px;opacity:.3;}
+.empty-state p{color:#333;font-size:13px;font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;top:18px;right:18px;background:#0d0900;color:var(--g);
+  border:1px solid var(--g);padding:12px 18px;border-radius:9px;font-size:12px;
+  z-index:9999;transform:translateX(200%);opacity:0;transition:all .35s;font-weight:700;}
+.toast.show{transform:translateX(0);opacity:1;}
+.toast.ok{background:#071307;color:#22c55e;border-color:#22c55e;}
+.toast.err{background:#130707;color:#ef4444;border-color:#ef4444;}
+
+/* SIZE CHECKBOXES */
+.size-checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.size-checks label{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:#aaa;}
+.size-checks input[type=checkbox]{accent-color:var(--g);width:13px;height:13px;}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="loginWrap">
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-icon">🏪</div>
+    <div class="login-logo">
+      <div class="brand">Nest<span>Kart</span></div>
+      <div class="sub">Seller Center</div>
+    </div>
+    <div class="fg"><label>Username</label><input type="text" id="lu" placeholder="admin" autocomplete="username"></div>
+    <div class="fg"><label>Password</label><input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"></div>
+    <button class="login-btn" onclick="doLogin()">🔐 Seller Center Mein Daakhil Ho</button>
+    <p class="login-err" id="lerr">❌ Galat credentials — dobara try karo</p>
+    <p class="store-link">← <a href="index.html">Store pe wapis jao</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div id="appWrap" style="display:none;">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-brand">Nest<span>Kart</span></div>
+      <div class="sb-sub">Seller Center</div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar">M</div>
+      <div><div class="sb-uname">Muqrram Ali</div><div class="sb-role">Admin / Seller</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <div class="sb-item on" id="nav-dash" onclick="goTab('dash')">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="sb-item" id="nav-orders" onclick="goTab('orders')">
+        <span class="icon">📋</span> Orders
+        <span class="badge gold" id="pendBadge" style="display:none;">0</span>
+      </div>
+      <div class="sb-section">Products</div>
+      <div class="sb-item" id="nav-products" onclick="goTab('products')">
+        <span class="icon">📦</span> All Products
+      </div>
+      <div class="sb-item" id="nav-import" onclick="goTab('import')">
+        <span class="icon">🤖</span> Markaz Import
+      </div>
+      <div class="sb-item" id="nav-manual" onclick="goTab('manual')">
+        <span class="icon">✏️</span> Manual Add
+      </div>
+      <div class="sb-section">Support</div>
+      <div class="sb-item" id="nav-chats" onclick="goTab('chats')">
+        <span class="icon">💬</span> Customer Chats
+        <span class="badge" id="chatBadge" style="display:none;">0</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item" onclick="window.open('index.html','_blank')">
+        <span class="icon">🌐</span> View Store
+      </div>
+    </div>
+    <div style="padding:14px 18px;border-top:1px solid #111;margin-top:16px;">
+      <button class="logout-btn" onclick="doLogout()">← Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageDesc">NestKart Seller Center</p>
+      </div>
+      <div class="topbar-right">
+        <button class="tb-btn" onclick="window.open('index.html','_blank')">🌐 Store</button>
+        <button class="tb-btn primary" onclick="goTab('import')">+ Import Product</button>
+      </div>
+    </div>
+
+    <!-- ─── DASHBOARD ─── -->
+    <div class="page on" id="tab-dash">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon ic-gold">📦</div><div class="stat-info"><h3 id="st-p">0</h3><p>Total Products</p></div></div>
+        <div class="stat-card"><div class="stat-icon ic-blue">📋</div><div class="stat-info"><h3 id="st-o">0</h3><p>Total Orders</p></div></div>
+        <div class="stat-card"><div class="stat-icon ic-red">⏳</div><div class="stat-info"><h3 id="st-pend">0</h3><p>Pending Orders</p></div></div>
+        <div class="stat-card"><div class="stat-icon ic-green">💰</div><div class="stat-info"><h3 id="st-rev" style="font-size:15px;color:#22c55e;">0</h3><p>Total Revenue</p></div></div>
+        <div class="stat-card"><div class="stat-icon ic-purple">💬</div><div class="stat-info"><h3 id="st-chat">0</h3><p>Active Chats</p></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📋 Recent Orders</h3></div>
+        <div class="card-body tbl-wrap">
+          <table><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Amount</th><th>City</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="recentOrds"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ORDERS ─── -->
+    <div class="page" id="tab-orders">
+      <div class="card">
+        <div class="card-head"><h3>📋 All Orders</h3><span id="ordCount" style="font-size:11px;color:#333;"></span></div>
+        <div class="card-body tbl-wrap">
+          <table><thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Product</th><th>Pack</th><th>Size</th><th>Amount</th><th>City</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="allOrds"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PRODUCTS ─── -->
+    <div class="page" id="tab-products">
+      <div class="card">
+        <div class="card-head"><h3>📦 All Products</h3>
+          <div style="display:flex;gap:8px;">
+            <span id="prodCount" style="font-size:11px;color:#333;line-height:2;"></span>
+            <button class="tb-btn primary" onclick="goTab('import')">+ Import</button>
+          </div>
+        </div>
+        <div class="card-body tbl-wrap">
+          <table><thead><tr><th>Image</th><th>Product Name</th><th>Category</th><th>Price</th><th>Sizes</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="prodTbl"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MARKAZ IMPORT ─── -->
+    <div class="page" id="tab-import">
+      <div class="card">
+        <div class="card-head"><h3>🤖 Markaz Auto Importer</h3></div>
+        <div class="card-body">
+
+          <!-- URL + PRICE ROW -->
+          <div class="fgroup">
+            <label>Markaz Product URL</label>
+            <input type="text" id="imp_url" placeholder="https://markaz.pk/products/... — URL yahan paste karo">
+          </div>
+          <div class="form-grid" style="margin-bottom:4px;">
+            <div class="fgroup">
+              <label>Markaz Price (Lагत)</label>
+              <div style="display:flex;background:#080808;border:1.5px solid #1a1a1a;border-radius:8px;overflow:hidden;">
+                <span style="padding:10px 12px;color:#444;font-size:13px;font-weight:700;border-right:1px solid #1a1a1a;">PKR</span>
+                <input type="number" id="imp_cost" placeholder="1200" min="1" oninput="calcPrices()"
+                  style="border:none;background:transparent;color:white;font-size:15px;font-weight:800;padding:10px;outline:none;flex:1;">
+              </div>
+            </div>
+            <div class="fgroup">
+              <label>Aapka Profit</label>
+              <div style="display:flex;background:#080808;border:1.5px solid #1a1a1a;border-radius:8px;overflow:hidden;">
+                <span style="padding:10px 12px;color:#444;font-size:13px;font-weight:700;border-right:1px solid #1a1a1a;">PKR</span>
+                <input type="number" id="imp_profit" placeholder="300" value="300" min="0" oninput="calcPrices()"
+                  style="border:none;background:transparent;color:white;font-size:15px;font-weight:800;padding:10px;outline:none;flex:1;">
+              </div>
+            </div>
+          </div>
+
+          <!-- PRICE PREVIEW -->
+          <div id="price_preview" style="display:none;margin-bottom:16px;">
+            <div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Preview — Aapki Website Pe Yeh Price Dikhega</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+              <div class="price-box"><div class="pb-label">Pack of 1</div><div class="pb-val" id="pv1">—</div></div>
+              <div class="price-box" style="border-color:#22c55e30;"><div class="pb-label">Pack of 2</div><div class="pb-val" id="pv2">—</div></div>
+              <div class="price-box" style="border-color:#22c55e50;"><div class="pb-label">Pack of 3</div><div class="pb-val" id="pv3">—</div></div>
+            </div>
+          </div>
+
+          <!-- BADGE -->
+          <div class="fgroup">
+            <label>Badge</label>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;">
+              <button class="badge-btn on" onclick="pickBadge('🔥 Hot',this)">🔥 Hot</button>
+              <button class="badge-btn" onclick="pickBadge('💥 Sale',this)">💥 Sale</button>
+              <button class="badge-btn" onclick="pickBadge('⭐ New',this)">⭐ New</button>
+              <button class="badge-btn" onclick="pickBadge('🏆 Best Seller',this)">🏆 Best Seller</button>
+              <button class="badge-btn" onclick="pickBadge('',this)">None</button>
+            </div>
+            <input type="hidden" id="imp_badge" value="🔥 Hot">
+          </div>
+
+          <button style="background:linear-gradient(90deg,var(--g),var(--g2));color:#000;padding:12px 28px;border:none;border-radius:9px;font-size:14px;font-weight:900;cursor:pointer;" id="impBtn" onclick="doImport()">
+            ⬇️ Markaz Se Import Karo
+          </button>
+
+          <div class="import-status" id="imp_status">⏳ Processing...</div>
+
+          <!-- PREVIEW -->
+          <div class="import-preview" id="imp_preview">
+            <div style="font-size:12px;color:#22c55e;font-weight:800;margin-bottom:12px;">✅ Product Ready — Save karo?</div>
+            <div style="display:flex;gap:12px;margin-bottom:12px;">
+              <img id="pv_img" src="" style="width:80px;height:80px;object-fit:cover;border-radius:9px;border:1px solid #222;">
+              <div style="flex:1;">
+                <div id="pv_name" style="font-size:13px;font-weight:800;color:white;margin-bottom:4px;"></div>
+                <div id="pv_cat" style="font-size:11px;color:var(--g);margin-bottom:3px;"></div>
+                <div id="pv_desc_short" style="font-size:10px;color:#444;line-height:1.5;"></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+              <div class="price-box"><div class="pb-label">Pack 1</div><div class="pb-val" id="cf_p1">—</div></div>
+              <div class="price-box"><div class="pb-label">Pack 2</div><div class="pb-val" id="cf_p2">—</div></div>
+              <div class="price-box"><div class="pb-label">Pack 3</div><div class="pb-val" id="cf_p3">—</div></div>
+            </div>
+            <input type="hidden" id="cf_p1v"><input type="hidden" id="cf_p2v"><input type="hidden" id="cf_p3v">
+            <div style="display:flex;gap:8px;">
+              <button class="save-btn" onclick="saveImport()">💾 Firebase Pe Save Karo</button>
+              <button class="cancel-btn" onclick="cancelImport()">✕ Cancel</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MANUAL ADD ─── -->
+    <div class="page" id="tab-manual">
+      <div class="card">
+        <div class="card-head"><h3 id="manHead">✏️ Manual Product Add</h3></div>
+        <div class="card-body">
+          <input type="hidden" id="edit_id">
+          <div class="fgroup">
+            <label>📸 Product Images (Max 8)</label>
+            <div class="img-grid" id="imgGrid"></div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <input type="text" id="imgUrlIn" placeholder="Ya image URL paste karo..."
+                style="flex:1;padding:9px 12px;background:#080808;border:1.5px solid #1a1a1a;border-radius:7px;color:white;font-size:12px;outline:none;">
+              <button onclick="addImgByUrl()" style="background:var(--g);border:none;padding:9px 14px;border-radius:7px;font-size:11px;font-weight:800;cursor:pointer;color:#000;white-space:nowrap;">+ URL</button>
+            </div>
+          </div>
+          <div class="fgroup"><label>Product Name *</label><input type="text" id="m_name" placeholder="e.g. Premium Cotton T-Shirt"></div>
+          <div class="form-grid">
+            <div class="fgroup"><label>Category</label>
+              <select id="m_cat" onchange="updateSizes()">
+                <option>Kitchen Tools</option><option>Home Decor</option><option>Gadgets</option>
+                <option>Organizers</option><option>Smart Lights</option><option>Cleaning</option>
+                <option>Clothing</option><option>Electronics</option><option>Shoes</option>
+                <option>Beauty</option><option>Other</option>
+              </select>
+            </div>
+            <div class="fgroup"><label>Badge</label>
+              <select id="m_badge">
+                <option value="🔥 Hot">🔥 Hot</option><option value="⭐ New">⭐ New</option>
+                <option value="💥 Sale">💥 Sale</option><option value="🏆 Best Seller">🏆 Best Seller</option>
+                <option value="💎 Premium">💎 Premium</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgroup" id="sizeWrap" style="display:none;">
+            <label>Available Sizes</label>
+            <div class="size-checks" id="sizeChecks"></div>
+          </div>
+          <div class="fgroup"><label>Description</label><textarea id="m_desc" rows="4" placeholder="Product description..."></textarea></div>
+          <div class="form-grid">
+            <div class="fgroup"><label>Pack 1 Price (PKR) *</label><input type="number" id="m_p1" placeholder="1499"></div>
+            <div class="fgroup"><label>Pack 2 Price (PKR)</label><input type="number" id="m_p2" placeholder="2799"></div>
+          </div>
+          <div class="form-grid">
+            <div class="fgroup"><label>Pack 3 Price (PKR)</label><input type="number" id="m_p3" placeholder="3999"></div>
+            <div class="fgroup"><label>Original/MRP Price</label><input type="number" id="m_op" placeholder="2500"></div>
+          </div>
+          <div class="form-grid">
+            <div class="fgroup"><label>Rating (1-5)</label><input type="number" id="m_rat" placeholder="4.5" min="1" max="5" step="0.1"></div>
+            <div class="fgroup"><label>Reviews Count</label><input type="number" id="m_rev" placeholder="128"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <button class="save-btn" onclick="saveProd()">💾 Save Product</button>
+            <button class="cancel-btn" onclick="resetManual()">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CHATS ─── -->
+    <div class="page" id="tab-chats">
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;">
+        <div class="card">
+          <div class="card-head"><h3>💬 Chat Sessions</h3></div>
+          <div class="card-body"><div class="chat-sessions" id="chatList"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 id="activeName">Select a chat</h3></div>
+          <div class="card-body">
+            <div class="chat-msgs" id="chatMsgs"><div style="text-align:center;color:#333;padding:40px;">Chat select karo</div></div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="replyIn" placeholder="Reply likho..." onkeydown="if(event.key==='Enter')sendReply()"
+                style="flex:1;padding:10px 13px;background:#080808;border:1.5px solid #1a1a1a;border-radius:8px;color:white;font-size:12px;outline:none;">
+              <button onclick="sendReply()" style="background:var(--g);border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:800;color:#000;">Send ➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+</div><!-- /appWrap -->
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-ov" id="ordModal">
+  <div class="modal">
+    <div class="modal-head"><h3>📋 Order Detail</h3><button class="modal-close" onclick="closeModal('ordModal')">✕</button></div>
+    <div id="ordDetail"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;" id="ordActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CLOTH_SZ=['XS','S','M','L','XL','XXL','XXXL'];
+const SHOE_SZ=['35','36','37','38','39','40','41','42','43','44','45','46'];
+const CATS_EM={'Kitchen Tools':'🍳','Home Decor':'🏠','Gadgets':'🔧','Organizers':'🧺','Smart Lights':'💡','Cleaning':'🧹','Clothing':'👗','Electronics':'📱','Shoes':'👟','Beauty':'💄','Other':'📦'};
+const CITIES=['Karachi','Lahore','Islamabad','Rawalpindi','Faisalabad','Multan','Peshawar','Quetta','Sialkot','Gujranwala','Hyderabad','Other'];
+
+let prods=[], orders=[];
+let chats=JSON.parse(localStorage.getItem('nk3_chats')||'{}');
+let activeChatId=null;
+let prodImgs=[], pendingImport=null;
+
+// ═══ LOGIN ═══
+function doLogin(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  if(u==='admin' && p==='Muqrram#786PK'){
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('appWrap').style.display='block';
+    document.getElementById('lerr').style.display='none';
+    loadData();
+  } else {
+    document.getElementById('lerr').style.display='block';
+  }
+}
+function doLogout(){
+  document.getElementById('appWrap').style.display='none';
+  document.getElementById('loginWrap').style.display='block';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+}
+
+// ═══ FIREBASE LOAD ═══
+function loadData(){
+  if(!window.db) return;
+  // Products
+  window.fsOnSnapshot(window.fsCollection(window.db,'products'), snap=>{
+    prods = snap.docs.map(d=>({...d.data(), _docId:d.id}));
+    renderProds();
+    updateStats();
+  });
+  // Orders
+  window.fsOnSnapshot(window.fsCollection(window.db,'orders'), snap=>{
+    orders = snap.docs.map(d=>({...d.data(), _docId:d.id}));
+    orders.sort((a,b)=>b.id-a.id);
+    renderOrders();
+    renderRecentOrds();
+    updateStats();
+  });
+}
+
+window.addEventListener('firebaseReady', ()=>{ if(document.getElementById('appWrap').style.display==='block') loadData(); });
+
+// ═══ NAVIGATION ═══
+const PAGE_TITLES = {
+  dash:'Dashboard', orders:'All Orders', products:'Products',
+  import:'Markaz Import', manual:'Manual Add Product', chats:'Customer Chats'
+};
+function goTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  document.getElementById('nav-'+tab)?.classList.add('on');
+  document.getElementById('pageTitle').textContent=PAGE_TITLES[tab]||tab;
+  if(tab==='manual'){initImgGrid();updateSizes();}
+  if(tab==='chats'){renderChatList();}
+}
+
+// ═══ STATS ═══
+function updateStats(){
+  const pend = orders.filter(o=>o.status==='Pending').length;
+  document.getElementById('st-p').textContent=prods.length;
+  document.getElementById('st-o').textContent=orders.length;
+  document.getElementById('st-pend').textContent=pend;
+  document.getElementById('st-rev').textContent=fmt(orders.reduce((a,o)=>a+(o.price||0),0));
+  document.getElementById('st-chat').textContent=Object.keys(chats).length;
+  const pb=document.getElementById('pendBadge');
+  if(pend>0){pb.textContent=pend;pb.style.display='inline';}else pb.style.display='none';
+  const cb=document.getElementById('chatBadge');
+  const uc=Object.keys(chats).length;
+  if(uc>0){cb.textContent=uc;cb.style.display='inline';}else cb.style.display='none';
+  document.getElementById('prodCount').textContent=prods.length+' products';
+  document.getElementById('ordCount').textContent=orders.length+' orders';
+}
+
+// ═══ PRODUCTS TABLE ═══
+function renderProds(){
+  const tb=document.getElementById('prodTbl');
+  if(!prods.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#333;">Koi product nahi</td></tr>`;return;}
+  tb.innerHTML=prods.map(p=>`
+    <tr>
+      <td><div class="td-img">${p.images&&p.images[0]?`<img src="${p.images[0]}">`:(CATS_EM[p.cat]||'📦')}</div></td>
+      <td><strong style="color:white;font-size:12px;">${p.name}</strong></td>
+      <td><span style="color:#888;font-size:11px;">${p.cat}</span></td>
+      <td><strong style="color:var(--g);">${fmt(p.p1)}</strong></td>
+      <td style="color:#555;font-size:11px;">${p.sizes&&p.sizes.length?p.sizes.join(', '):'-'}</td>
+      <td><span class="badge b-live">✅ Live</span></td>
+      <td>
+        <button class="act-btn act-edit" onclick="editProd(${p.id})">✏️ Edit</button>
+        <button class="act-btn act-del" onclick="delProd('${p._docId}',${p.id})">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ═══ ORDERS TABLE ═══
+function renderOrders(){
+  const tb=document.getElementById('allOrds');
+  if(!orders.length){tb.innerHTML=`<tr><td colspan="11" style="text-align:center;padding:40px;color:#333;">Koi order nahi</td></tr>`;return;}
+  tb.innerHTML=orders.map((o,i)=>`
+    <tr>
+      <td style="color:#555;">#${orders.length-i}</td>
+      <td><strong style="color:white;">${o.name}</strong></td>
+      <td style="color:#888;">${o.phone}</td>
+      <td style="max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${o.pname||''}</td>
+      <td>×${o.pack||1}</td>
+      <td style="color:var(--g);">${o.size||'-'}</td>
+      <td><strong style="color:var(--g);">${fmt(o.price)}</strong></td>
+      <td>${o.city}</td>
+      <td style="color:#555;font-size:11px;">${o.date||''}</td>
+      <td><span class="badge ${o.status==='Pending'?'b-pend':o.status==='Confirmed'?'b-conf':'b-del'}">${o.status}</span></td>
+      <td>
+        <button class="act-btn act-view" onclick="viewOrd(${o.id})">👁️</button>
+        ${o.status==='Pending'?`<button class="act-btn act-conf" onclick="updOrd(${o.id},'Confirmed')">✅</button>`:''}
+        ${o.status==='Confirmed'?`<button class="act-btn act-conf" onclick="updOrd(${o.id},'Delivered')">📦</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+function renderRecentOrds(){
+  const tb=document.getElementById('recentOrds');
+  const recent=orders.slice(0,8);
+  if(!recent.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#333;">Koi order nahi</td></tr>`;return;}
+  tb.innerHTML=recent.map((o,i)=>`
+    <tr>
+      <td style="color:#555;">#${orders.length-i}</td>
+      <td><strong style="color:white;">${o.name}</strong><br><span style="color:#444;font-size:10px;">${o.phone}</span></td>
+      <td style="max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;">${o.pname||''}</td>
+      <td><strong style="color:var(--g);">${fmt(o.price)}</strong></td>
+      <td>${o.city}</td>
+      <td><span class="badge ${o.status==='Pending'?'b-pend':o.status==='Confirmed'?'b-conf':'b-del'}">${o.status}</span></td>
+      <td><button class="act-btn act-view" onclick="viewOrd(${o.id})">👁️</button></td>
+    </tr>`).join('');
+}
+
+function viewOrd(id){
+  const o=orders.find(x=>x.id===id);if(!o)return;
+  document.getElementById('ordDetail').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      ${row('Customer',o.name)}${row('Phone',o.phone)}
+      ${row('City',o.city)}${row('Date',o.date||'')}
+      ${row('Product',o.pname||'')}${row('Pack','Pack of '+(o.pack||1))}
+      ${o.size?row('Size',`<span style="color:var(--g);">${o.size}</span>`):''}
+      ${row('Amount',`<span style="color:var(--g);font-size:15px;font-weight:900;">${fmt(o.price)}</span>`)}
+      ${row('Status',`<span class="badge ${o.status==='Pending'?'b-pend':o.status==='Confirmed'?'b-conf':'b-del'}">${o.status}</span>`)}
+    </div>
+    ${o.addr?`<div style="margin-top:10px;padding:10px;background:#080808;border-radius:8px;font-size:12px;color:#888;"><strong style="color:#555;">Address:</strong> ${o.addr}</div>`:''}
+    ${o.note?`<div style="margin-top:6px;padding:8px 10px;background:#080808;border-radius:8px;font-size:11px;color:#555;"><strong>Note:</strong> ${o.note}</div>`:''}`;
+  document.getElementById('ordActions').innerHTML=`
+    ${o.status==='Pending'?`<button class="save-btn" onclick="updOrd(${o.id},'Confirmed');closeModal('ordModal')">✅ Confirm Order</button>`:''}
+    ${o.status==='Confirmed'?`<button class="save-btn" onclick="updOrd(${o.id},'Delivered');closeModal('ordModal')">📦 Mark Delivered</button>`:''}
+    <a href="https://wa.me/92${(o.phone||'').replace(/^0/,'')}?text=Assalam+o+Alaikum+${o.name}!+Aapka+NestKart+order+(${o.pname})+confirm+ho+gaya.+Amount:+${fmt(o.price)}+COD.+3-6+din+mein+delivery+hogi.+Shukriya!" target="_blank">
+      <button style="background:#25D366;color:white;border:none;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;">💬 WhatsApp</button>
+    </a>`;
+  document.getElementById('ordModal').classList.add('open');
+}
+function row(label,val){return `<div style="padding:8px;background:#080808;border-radius:7px;"><div style="font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">${label}</div><div style="font-size:12px;font-weight:700;color:#ccc;">${val}</div></div>`;}
+async function updOrd(id,status){
+  const o=orders.find(x=>x.id===id);if(!o)return;
+  o.status=status;
+  if(o._docId)try{await window.fsUpdateDoc(window.fsDoc(window.db,'orders',o._docId),{status});}catch(e){}
+  renderOrders();renderRecentOrds();updateStats();showToast('✅ Status: '+status);
+}
+
+// ═══ MARKAZ IMPORT ═══
+function calcPrices(){
+  const cost=parseInt(document.getElementById('imp_cost').value)||0;
+  const profit=parseInt(document.getElementById('imp_profit').value)||0;
+  const box=document.getElementById('price_preview');
+  if(!cost){box.style.display='none';return;}
+  const p1=cost+profit;
+  box.style.display='block';
+  document.getElementById('pv1').textContent=fmt(p1);
+  document.getElementById('pv2').textContent=fmt(p1*2);
+  document.getElementById('pv3').textContent=fmt(p1*3);
+}
+
+function pickBadge(val,el){
+  document.getElementById('imp_badge').value=val;
+  document.querySelectorAll('.badge-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+async function doImport(){
+  const url=document.getElementById('imp_url').value.trim();
+  if(!url||!url.includes('markaz')){showToast('❌ Sahi Markaz URL daalo!','err');return;}
+  const cost=parseInt(document.getElementById('imp_cost').value)||0;
+  const profit=parseInt(document.getElementById('imp_profit').value)||200;
+  if(!cost){showToast('❌ Markaz price (lागत) daalo!','err');return;}
+  const p1=cost+profit;
+  const badge=document.getElementById('imp_badge').value;
+
+  document.getElementById('imp_status').style.display='block';
+  document.getElementById('imp_status').textContent='🔍 Markaz se product fetch ho raha hai...';
+  document.getElementById('imp_preview').style.display='none';
+  document.getElementById('impBtn').disabled=true;
+
+  try{
+    const html=await (await fetch('https://corsproxy.io/?'+encodeURIComponent(url))).text();
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    let title=doc.querySelector('meta[property="og:title"]')?.content||doc.querySelector('h1')?.textContent?.trim()||'Product';
+    title=title.replace(/\s+/g,' ').trim();
+    const imgs=[...doc.querySelectorAll('meta[property="og:image"]')].map(m=>m.content).filter(Boolean);
+    const imgs2=[...doc.querySelectorAll('img')].map(i=>i.src||'').filter(s=>s.startsWith('http')&&(s.includes('cdn')||s.includes('product')||s.includes('upload'))&&!s.includes('logo'));
+    const allImgs=[...new Set([...imgs,...imgs2])].slice(0,8);
+    let desc=(doc.querySelector('meta[name="description"]')?.content||doc.querySelector('meta[property="og:description"]')?.content||'').replace(/\s+/g,' ').trim();
+    const cat=detCat(title);
+    const sizes=detSizes(cat,title);
+
+    pendingImport={id:Date.now(),name:title,desc:desc||title+' — Premium quality. Cash on Delivery. Fast delivery Pakistan.',
+      descImgs:[],images:allImgs,p1,p2:p1*2,p3:p1*3,op:Math.round(p1*1.4),
+      cat,badge,rat:parseFloat((4.2+Math.random()*.7).toFixed(1)),rev:Math.floor(50+Math.random()*500),sizes};
+
+    document.getElementById('imp_status').style.display='none';
+    document.getElementById('pv_img').src=allImgs[0]||'';
+    document.getElementById('pv_name').textContent=title;
+    document.getElementById('pv_cat').textContent='📂 '+cat+(sizes.length?' | 📏 '+sizes.slice(0,5).join(', ')+(sizes.length>5?'...':''):'');
+    document.getElementById('pv_desc_short').textContent=(desc||'').substring(0,120)+(desc.length>120?'...':'');
+    document.getElementById('cf_p1').textContent=fmt(p1);
+    document.getElementById('cf_p2').textContent=fmt(p1*2);
+    document.getElementById('cf_p3').textContent=fmt(p1*3);
+    document.getElementById('cf_p1v').value=p1;
+    document.getElementById('cf_p2v').value=p1*2;
+    document.getElementById('cf_p3v').value=p1*3;
+    document.getElementById('imp_preview').style.display='block';
+    showToast('✅ Product ready — save karo!','ok');
+  }catch(e){
+    document.getElementById('imp_status').textContent='❌ Error: '+e.message;
+    showToast('❌ Import failed: '+e.message.substring(0,40),'err');
+  }
+  document.getElementById('impBtn').disabled=false;
+}
+
+async function saveImport(){
+  if(!pendingImport)return;
+  try{
+    await window.fsAddDoc(window.fsCollection(window.db,'products'),pendingImport);
+    showToast('✅ Product Firebase pe save ho gaya!','ok');
+    cancelImport();
+    document.getElementById('imp_url').value='';
+    document.getElementById('imp_cost').value='';
+    document.getElementById('price_preview').style.display='none';
+  }catch(e){showToast('❌ Error: '+e.message,'err');}
+}
+function cancelImport(){
+  pendingImport=null;
+  document.getElementById('imp_preview').style.display='none';
+  document.getElementById('imp_status').style.display='none';
+}
+
+// ═══ MANUAL PRODUCT ═══
+function initImgGrid(){
+  const wrap=document.getElementById('imgGrid');if(!wrap)return;
+  wrap.innerHTML='';
+  prodImgs=prodImgs.length?prodImgs:[];
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');s.className='img-slot';
+    if(prodImgs[i]){
+      s.innerHTML=`<img src="${prodImgs[i]}"><button class="rm" onclick="rmImg(event,${i})">✕</button>`;
+    }else{
+      s.innerHTML=`<div style="text-align:center"><div style="font-size:22px;margin-bottom:2px;">📷</div><div style="font-size:9px;color:#333;">Add Image</div></div>`;
+      s.onclick=()=>pickImg(i);
+    }
+    wrap.appendChild(s);
+  }
+}
+function addImgByUrl(){
+  const inp=document.getElementById('imgUrlIn');const url=inp.value.trim();
+  if(!url)return;
+  const idx=prodImgs.findIndex(x=>!x);
+  const i=idx!==-1?idx:prodImgs.length;
+  if(i>=8){showToast('❌ Max 8 images!','err');return;}
+  prodImgs[i]=url;inp.value='';initImgGrid();showToast('✅ Image added!','ok');
+}
+function pickImg(idx){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{prodImgs[idx]=ev.target.result;initImgGrid();};r.readAsDataURL(f);};inp.click();
+}
+function rmImg(e,idx){e.stopPropagation();prodImgs[idx]=null;initImgGrid();}
+
+function updateSizes(){
+  const cat=document.getElementById('m_cat').value;
+  const wrap=document.getElementById('sizeWrap');
+  const checks=document.getElementById('sizeChecks');
+  if(cat==='Clothing'||cat==='Shoes'){
+    wrap.style.display='block';
+    const sz=cat==='Clothing'?CLOTH_SZ:SHOE_SZ;
+    checks.innerHTML=sz.map(s=>`<label><input type="checkbox" value="${s}"> ${s}</label>`).join('');
+  }else wrap.style.display='none';
+}
+function getSizes(){return [...document.querySelectorAll('#sizeChecks input:checked')].map(c=>c.value);}
+
+async function saveProd(){
+  const name=document.getElementById('m_name').value.trim();
+  const p1=document.getElementById('m_p1').value;
+  if(!name||!p1){showToast('❌ Name aur Pack 1 price zaroori!','err');return;}
+  const eid=document.getElementById('edit_id').value;
+  const obj={
+    id:eid?parseInt(eid):Date.now(),name,
+    desc:document.getElementById('m_desc').value,
+    descImgs:[],
+    images:prodImgs.filter(Boolean),
+    p1:parseInt(p1),
+    p2:parseInt(document.getElementById('m_p2').value)||null,
+    p3:parseInt(document.getElementById('m_p3').value)||null,
+    op:parseInt(document.getElementById('m_op').value)||null,
+    cat:document.getElementById('m_cat').value,
+    badge:document.getElementById('m_badge').value,
+    rat:parseFloat(document.getElementById('m_rat').value)||4.5,
+    rev:parseInt(document.getElementById('m_rev').value)||0,
+    sizes:getSizes()
+  };
+  try{
+    if(eid){const p=prods.find(x=>x.id==eid);if(p&&p._docId)await window.fsUpdateDoc(window.fsDoc(window.db,'products',p._docId),obj);showToast('✅ Product updated!','ok');}
+    else{await window.fsAddDoc(window.fsCollection(window.db,'products'),obj);showToast('✅ Product add ho gaya!','ok');}
+    resetManual();
+  }catch(e){showToast('❌ Error: '+e.message,'err');}
+}
+function resetManual(){
+  document.getElementById('edit_id').value='';
+  document.getElementById('manHead').textContent='✏️ Manual Product Add';
+  ['m_name','m_desc','m_p1','m_p2','m_p3','m_op','m_rat','m_rev'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  prodImgs=[];initImgGrid();updateSizes();
+}
+function editProd(id){
+  const p=prods.find(x=>x.id===id);if(!p)return;
+  goTab('manual');
+  document.getElementById('edit_id').value=id;
+  document.getElementById('manHead').textContent='✏️ Edit Product';
+  document.getElementById('m_name').value=p.name||'';
+  document.getElementById('m_desc').value=p.desc||'';
+  document.getElementById('m_p1').value=p.p1||'';
+  document.getElementById('m_p2').value=p.p2||'';
+  document.getElementById('m_p3').value=p.p3||'';
+  document.getElementById('m_op').value=p.op||'';
+  document.getElementById('m_cat').value=p.cat||'Other';
+  document.getElementById('m_badge').value=p.badge||'🔥 Hot';
+  document.getElementById('m_rat').value=p.rat||4.5;
+  document.getElementById('m_rev').value=p.rev||0;
+  prodImgs=p.images?[...p.images]:[];
+  setTimeout(()=>{initImgGrid();updateSizes();},50);
+}
+async function delProd(docId,id){
+  if(!confirm('Yeh product delete karo?'))return;
+  try{if(docId)await window.fsDeleteDoc(window.fsDoc(window.db,'products',docId));showToast('🗑️ Product deleted!','ok');}catch(e){showToast('❌ Error: '+e.message,'err');}
+}
+
+// ═══ CHATS ═══
+function renderChatList(){
+  const wrap=document.getElementById('chatList');
+  const keys=Object.keys(chats);
+  if(!keys.length){wrap.innerHTML='<div class="empty-state"><div class="ei">💬</div><p>Koi customer chat nahi abhi</p></div>';return;}
+  wrap.innerHTML=keys.reverse().map(sid=>{
+    const s=chats[sid];const last=s.msgs[s.msgs.length-1];
+    const unread=s.msgs.filter(m=>m.from==='customer'&&!m.read).length;
+    return `<div class="cs ${activeChatId===sid?'on':''}" onclick="openChat('${sid}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="cs-name">👤 ${s.name}${unread?`<span class="cs-badge">${unread}</span>`:''}</div>
+        <div style="font-size:10px;color:#333;">${last?last.time:''}</div>
+      </div>
+      <div style="font-size:9px;color:#444;">${s.phone||''}</div>
+      <div class="cs-last">${last?last.text.substring(0,50):''}</div>
+    </div>`;
+  }).join('');
+}
+function openChat(sid){
+  activeChatId=sid;
+  const s=chats[sid];
+  s.msgs.forEach(m=>{if(m.from==='customer')m.read=true;});
+  localStorage.setItem('nk3_chats',JSON.stringify(chats));
+  document.getElementById('activeName').textContent='💬 '+s.name+' ('+s.phone+')';
+  const wrap=document.getElementById('chatMsgs');
+  wrap.innerHTML=s.msgs.map(m=>`
+    <div><div class="msg ${m.from==='admin'?'c':'a'}">${m.from==='admin'?'<span style="color:var(--g);font-size:9px;">Admin: </span>':''}${m.text}</div>
+    <div class="msg-time" style="text-align:${m.from==='admin'?'right':'left'}">${m.time}</div></div>`).join('');
+  wrap.scrollTop=wrap.scrollHeight;
+  renderChatList();
+}
+function sendReply(){
+  if(!activeChatId)return;
+  const inp=document.getElementById('replyIn');
+  const text=inp.value.trim();if(!text)return;
+  chats[activeChatId].msgs.push({from:'admin',text,time:new Date().toLocaleTimeString()});
+  localStorage.setItem('nk3_chats',JSON.stringify(chats));
+  inp.value='';openChat(activeChatId);showToast('✅ Reply sent!','ok');
+}
+
+// ═══ HELPERS ═══
+function fmt(n){const num=Math.round(Number(n));if(isNaN(num)||num<=0)return 'PKR 0';return 'PKR '+num.toLocaleString('en-US');}
+function detCat(t){
+  t=(t||'').toLowerCase();
+  if(t.includes('shirt')||t.includes('kurta')||t.includes('dress')||t.includes('trouser')||t.includes('jeans')||t.includes('hoodie')||t.includes('jacket')||t.includes('shalwar'))return'Clothing';
+  if(t.includes('shoe')||t.includes('sandal')||t.includes('boot')||t.includes('heel')||t.includes('sneaker')||t.includes('chappal'))return'Shoes';
+  if(t.includes('light')||t.includes('bulb')||t.includes('led')||t.includes('lamp'))return'Smart Lights';
+  if(t.includes('phone')||t.includes('earphone')||t.includes('charger')||t.includes('cable')||t.includes('speaker')||t.includes('watch')||t.includes('headphone'))return'Electronics';
+  if(t.includes('cream')||t.includes('serum')||t.includes('shampoo')||t.includes('makeup')||t.includes('lipstick')||t.includes('beauty')||t.includes('skin'))return'Beauty';
+  if(t.includes('pan')||t.includes('knife')||t.includes('cooker')||t.includes('blender')||t.includes('kettle')||t.includes('kitchen')||t.includes('chopper'))return'Kitchen Tools';
+  if(t.includes('organizer')||t.includes('storage')||t.includes('rack')||t.includes('shelf'))return'Organizers';
+  if(t.includes('clean')||t.includes('mop')||t.includes('broom'))return'Cleaning';
+  return'Other';
+}
+function detSizes(cat,t){
+  if(cat==='Clothing'){if((t||'').toLowerCase().includes('free'))return['Free Size'];return['S','M','L','XL','XXL'];}
+  if(cat==='Shoes')return['37','38','39','40','41','42','43'];return[];
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',3000);
+}
+
+// Init
+document.getElementById('lu').focus();
+</script>
+</body>
+</html>
